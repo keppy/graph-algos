@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <queue>
 #define MaxV 1000
 
 struct edgenode {
@@ -33,7 +34,7 @@ int insert_edge(graph *g, int x, int y, bool directed) {
   edgenode *p;
   p = (edgenode*)std::malloc(sizeof(edgenode));
 
-  p->weight = NULL;
+  p->weight = 0;
   p->y = y;
   p->next = g->edges[x];
   
@@ -89,8 +90,81 @@ int print_graph(graph *g) {
   return 0;
 };
 
+
+/* BFS */
+bool processed[MaxV+1];
+bool discovered[MaxV+1];
+int parent[MaxV+1];
+
+int initialize_search(graph *g) {
+  int i;
+
+  for (i=1; i<=g->nVertices; i++) {
+    processed[i] = discovered[i] = false;
+    parent[i] = -1;
+  }
+
+  return 0;
+};
+
+int process_vertex_late(int v) {
+  return 0;
+};
+
+int process_vertex_early(int v) {
+  std::printf("processed vertex %d\n", v);
+  return 0;
+};
+
+int process_edge(int x, int y) {
+  std::printf("processed edge (%d, %d)\n", x, y);
+  return 0;
+};
+
+int bfs(graph *g, int start) {
+  std::queue <int> q;
+  int v; /* Current vertex */
+  int y; /* Successor vertex */
+  edgenode *p;
+
+  q.push(start);
+  discovered[start] = true;
+
+  while (q.empty() == false) {
+    v = q.front();
+    q.pop();
+    process_vertex_early(v);
+    processed[v] = true;
+    p = g->edges[v];
+
+    while (p != NULL) {
+      y = p->y;
+
+      if ((processed[y] == false) || g->directed) {
+        process_edge(v, y);
+      }
+
+      if (discovered[y] == false) {
+        q.push(y);
+        discovered[y] = true;
+        parent[y] = v;
+      }
+
+      p = p->next;
+    }
+
+    process_vertex_late(v);
+  }
+  return 0;
+};
+
 int main() {
   graph *g = read_graph(new graph, false);
+  std::printf("Printing graph data from structure:\n");
   print_graph(g);
+  std::printf("\n");
+
+  std::printf("BFS algo: \n");
+  bfs(g, 1);
   return 0;
 };
