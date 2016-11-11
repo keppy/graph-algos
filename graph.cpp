@@ -158,13 +158,30 @@ int bfs(graph *g, int start) {
   return 0;
 };
 
+int find_path(int start, int end, int parents[]) {
+  if ((start == end) || (end == -1)) {
+    std::printf("\n%d", start);
+  } else {
+    find_path(start, parents[end], parents);
+    std::printf(" %d", end);
+  }
+  return 0;
+};
+
 int main() {
   graph *g = read_graph(new graph, false);
+
   std::printf("Printing graph data from structure:\n");
   print_graph(g);
+
   std::printf("\n");
 
   std::printf("BFS algo: \n");
   bfs(g, 1);
+
+  std::printf("\nShortest path from 1 to 4 is:");
+  find_path(1, 4, parent);
+
+  std::printf("\n");
   return 0;
 };
